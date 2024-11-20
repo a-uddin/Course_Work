@@ -1,6 +1,8 @@
 // server.js
 const express = require('express');
-const cors = require('cors'); // Import CORS
+const cors = require('cors'); 
+// Import CORS (by default web browser block requests from one domain to another 
+//due to security policies known as same-origin policy)
 const connectDB = require('./dbConnect');
 const Football = require('./footballSchema');
 
@@ -37,12 +39,10 @@ app.get('/api/footballs', async (req, res) => {
 // Add a record to the Football collection
 app.post('/api/footballs', async (req, res) => {
   try {
-    console.log('Received data from frontend:', req.body); // Log received data
-    
     const newRecord = new Football(req.body);
     await newRecord.save();
 
-    console.log('Data successfully saved in MongoDB:', newRecord); // Log saved data
+    // console.log('Data successfully saved in MongoDB:', newRecord); // Log saved data
     res.status(201).json({ message: 'Record added successfully', newRecord });
   } catch (err) {
     console.error('Error adding record:', err.message, err.errors); // Log any errors
@@ -116,13 +116,11 @@ app.get('/api/footballs/team-summary/:team', async (req, res) => {
 });
 
 
-
-
 // Delete a record for a given team
 app.post('/api/footballs/delete', async (req, res) => {
   const { Team, Year } = req.body;
   try {
-    await Football.findOneAndDelete({ Team, Year });
+    await Football.findOneAndDelete({ Team: new RegExp(`^${Team}$`, 'i'), Year: parseInt(Year) });
     console.log(`Record deleted for team: ${Team}, Year: ${Year}`);
     res.json({ message: 'Record deleted successfully' });
   } catch (err) {

@@ -1,40 +1,60 @@
-// src/components/AverageGoals.js
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import './AverageGoals.css';
+
 
 const AverageGoals = () => {
   const [year, setYear] = useState('');
   const [teams, setTeams] = useState([]);
+  const [flags, setFlags] = useState({});
   const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    setYear(e.target.value);
-  };
+  // Fetch country flags dynamically
+  useEffect(() => {
+    const fetchFlags = async () => {
+      try {
+        const response = await fetch('https://restcountries.com/v3.1/all');
+        const countries = await response.json();
+        const flagsMap = {};
+        countries.forEach((country) => {
+          flagsMap[country.name.common] = country.flags.svg; // Map country names to flag URLs
+        });
+        setFlags(flagsMap);
+      } catch (error) {
+        console.error('Error fetching flags:', error);
+      }
+    };
 
+    fetchFlags();
+  }, []);
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!year) {
+      setError('Please enter a year.');
+      return;
+    }
     try {
-      const { data } = await axios.get(`http://localhost:5000/api/footballs/average-goals/${year}`);
-      console.log('Fetched Data with Average Goals:', data);
+      const response = await fetch(`http://localhost:5000/api/footballs/average-goals/${year}`); 
+      const data = await response.json();
       if (data.length === 0) {
-        setError(`No teams found for the year ${year}`);
+        setError(`No teams found for the year ${year}.`);
         setTeams([]);
       } else {
-        setTeams(data);
         setError('');
+        setTeams(data);
       }
-    } catch (err) {
-      console.error('Error fetching teams:', err);
-      setError('Error fetching data from server. Please try again later.');
-      setTeams([]);
+    } catch (error) {
+      console.error('Error fetching teams:', error);
+      setError('Error fetching data from the server. Please try again later.');
     }
   };
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center mb-4">Teams for Year {year}</h2>
+      <h2 className="text-center mb-4">Teams with Average Goals for {year}</h2>
       <div className="row justify-content-center">
-        <div className="col-lg-10 col-md-12">
+        <div className="col-lg-12 col-md-12">
           <form onSubmit={handleSubmit} className="mx-auto" style={{ maxWidth: '400px' }}>
             <div className="form-group mb-3">
               <label>Enter Year</label>
@@ -43,7 +63,7 @@ const AverageGoals = () => {
                 className="form-control"
                 placeholder="Year"
                 value={year}
-                onChange={handleChange}
+                onChange={(e) => setYear(e.target.value)}
                 required
               />
             </div>
@@ -58,26 +78,39 @@ const AverageGoals = () => {
 
           {teams.length > 0 && (
             <div className="mt-4">
-              <h4 className="text-center">Teams with Average Goals for Year {year}</h4>
+              <h4 className="text-center">Teams with Average Goals for {year}</h4>
               <div className="table-responsive">
-                <table className="table table-striped table-bordered" style={{ tableLayout: 'fixed', width: '100%' }}>
+                <table className="table table-striped">
                   <thead className="thead-dark">
                     <tr>
+                      <th></th>
                       <th>Team</th>
                       <th>Games Played</th>
-                      <th>Win</th>
-                      <th>Draw</th>
-                      <th>Loss</th>
+                      <th>Wins</th>
+                      <th>Draws</th>
+                      <th>Losses</th>
                       <th>Goals For</th>
                       <th>Goals Against</th>
+                      <th>Average Goals</th>
                       <th>Points</th>
                       <th>Year</th>
-                      <th>Average Goals</th>
                     </tr>
                   </thead>
                   <tbody>
                     {teams.map((team, index) => (
                       <tr key={index}>
+                        <td>
+                          {flags[team.Team] ? (
+                            <img
+                              src={flags[team.Team]}
+                              alt={team.Team}
+                              className="flag"
+                              style={{ width: '40px', height: '25px' }}
+                            />
+                          ) : (
+                            'N/A'
+                          )}
+                        </td>
                         <td>{team.Team}</td>
                         <td>{team.GamesPlayed}</td>
                         <td>{team.Win}</td>
@@ -85,9 +118,9 @@ const AverageGoals = () => {
                         <td>{team.Loss}</td>
                         <td>{team.GoalsFor}</td>
                         <td>{team.GoalsAgainst}</td>
+                        <td>{team.avgGoals?.toFixed(2) || 'N/A'}</td>
                         <td>{team.Points}</td>
                         <td>{team.Year}</td>
-                        <td>{team.avgGoals !== undefined ? team.avgGoals.toFixed(2) : 'N/A'}</td>
                       </tr>
                     ))}
                   </tbody>

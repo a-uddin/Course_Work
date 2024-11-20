@@ -7,7 +7,8 @@ const Summary = () => {
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState('');
 
-  const fetchSummary = async () => {
+  const fetchSummary = async (e) => {
+    if (e) e.preventDefault();
     try {
       const { data } = await axios.get(`http://localhost:5000/api/footballs/summary/${year}`);
       if (data.length === 0) {
@@ -20,6 +21,7 @@ const Summary = () => {
     } catch (err) {
       console.error('Error fetching summary:', err);
       setError('Error fetching data from server. Please try again later.');
+      setSummary(null);
     }
   };
 
@@ -28,33 +30,48 @@ const Summary = () => {
       <h2 className="text-center mb-4">Year Summary</h2>
       <div className="row justify-content-center">
         <div className="col-lg-6 col-md-8 col-sm-10">
-          <div className="form-group mb-3">
-            <label>Enter Year</label>
-            <input
-              type="number"
-              className="form-control"
-              placeholder="Year"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-              required
-            />
-          </div>
-          <div className="d-grid">
-            <button className="btn btn-primary" onClick={fetchSummary}>
-              Get Summary
-            </button>
-          </div>
+          <form onSubmit={fetchSummary}>
+            <div className="form-group mb-3">
+              <label>Enter Year</label>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Year"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                required
+              />
+            </div>
+            <div className="d-grid">
+              <button type="submit" className="btn btn-primary">
+                Get Summary
+              </button>
+            </div>
+          </form>
 
           {error && <p className="text-danger mt-3 text-center">{error}</p>}
 
           {summary && (
             <div className="mt-4">
-              <h4 className="text-center">Summary for {year}</h4>
-              <ul className="list-group">
-                <li className="list-group-item">Total Games Played: {summary.totalGamesPlayed}</li>
-                <li className="list-group-item">Total Wins: {summary.totalWins}</li>
-                <li className="list-group-item">Total Draws: {summary.totalDraws}</li>
-              </ul>
+              <h4 className="text-center">Summary for {summary._id}</h4>
+              <div className="table-responsive">
+                <table className="table table-striped">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th className="text-center">Total Games Played</th>
+                      <th className="text-center">Total Wins</th>
+                      <th className="text-center">Total Draws</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="text-center">{summary.totalGamesPlayed}</td>
+                      <td className="text-center">{summary.totalWins}</td>
+                      <td className="text-center">{summary.totalDraws}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

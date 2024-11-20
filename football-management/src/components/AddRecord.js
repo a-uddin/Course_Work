@@ -18,13 +18,18 @@ const AddRecord = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
-      ...formData,
+      ...formData, //when updating only part of an object in 'useState' 
+      //use spread operator '...formData'
       [name]: e.target.type === 'number' ? parseInt(value) : value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const confirmDelete = window.confirm('Are you sure you want to Add this record?');
+    if (!confirmDelete) {
+      return;
+    }
     try {
       await axios.post('http://localhost:5000/api/footballs', formData);
       alert('Record added successfully!');

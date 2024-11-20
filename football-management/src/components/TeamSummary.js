@@ -7,7 +7,8 @@ const TeamSummary = () => {
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState('');
 
-  const fetchSummary = async () => {
+  const fetchSummary = async (e) => {
+    if (e) e.preventDefault();
     try {
       const { data } = await axios.get(`http://localhost:5000/api/footballs/team-summary/${team}`);
       if (data.length === 0) {
@@ -29,33 +30,50 @@ const TeamSummary = () => {
       <h2 className="text-center mb-4">Team Summary</h2>
       <div className="row justify-content-center">
         <div className="col-lg-6 col-md-8 col-sm-10">
-          <div className="form-group mb-3">
-            <label>Enter Team Name</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Team"
-              value={team}
-              onChange={(e) => setTeam(e.target.value)}
-              required
-            />
-          </div>
-          <div className="d-grid">
-            <button onClick={fetchSummary} className="btn btn-primary">
-              Get Summary
-            </button>
-          </div>
+          <form onSubmit={fetchSummary}>
+            <div className="form-group mb-3">
+              <label>Enter Team Name</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Team"
+                value={team}
+                onChange={(e) => setTeam(e.target.value)}
+                required
+              />
+            </div>
+            <div className="d-grid">
+              <button type="submit" className="btn btn-primary">
+                Get Summary
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
       {error && <p className="text-danger mt-3 text-center">{error}</p>}
 
       {summary && (
-        <div className="mt-4">
-          <h4 className="text-center">Summary for {summary._id}</h4>
-          <p className="text-center">Total Games Played: {summary.totalGamesPlayed}</p>
-          <p className="text-center">Total Wins: {summary.totalWins}</p>
-          <p className="text-center">Total Draws: {summary.totalDraws}</p>
+        <div className="mt-4 d-flex justify-content-center">
+          <div className="table-responsive" style={{ maxWidth: '600px' }}>
+            <h4 className="text-center mb-4">Summary for {summary._id}</h4>
+            <table className="table table-striped">
+              <thead className="thead-dark">
+                <tr>
+                  <th className="text-center">Total Games Played</th>
+                  <th className="text-center">Total Wins</th>
+                  <th className="text-center">Total Draws</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="text-center">{summary.totalGamesPlayed}</td>
+                  <td className="text-center">{summary.totalWins}</td>
+                  <td className="text-center">{summary.totalDraws}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

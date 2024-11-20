@@ -1,0 +1,40 @@
+.table-container {
+    max-width: 90%; /* Ensures the table container is wider */
+    margin: 0 auto; /* Centers the table within its container */
+}
+
+.table {
+    width: 100%; /* Table spans the full width of the container */
+    table-layout: auto; /* Allows the table to adjust column width dynamically */
+}
+
+
+
+.table td:nth-child(2) {
+    text-align: left; /* Left-aligns the 'Team' column */
+   /* display: flex;  Aligns flag and text horizontally */
+    align-items: center; /* Vertically aligns flag and text */
+}
+
+
+.table td:first-child img {
+    margin-right: 10px; /* Adds spacing between flag and text */
+    vertical-align: middle; /* Centers flag with text */
+}
+
+thead th {
+    background-color: #343a40; /* Header background color */
+    color: #ffffff; /* Header text color */
+    font-weight: bold; /* Makes header text bold */
+}
+
+
+.table th:nth-child(2) {
+    text-align: left;
+}
+
+.table th, .table td {
+    text-align: center; /* Center-aligns all table content by default */
+    vertical-align: middle; /* Ensures vertical alignment of content */
+    padding: 10px; /* Adds padding for better spacing */
+}

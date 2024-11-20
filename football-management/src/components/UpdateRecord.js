@@ -25,6 +25,10 @@ const UpdateRecord = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const confirmDelete = window.confirm('Are you sure you want to Update this record?');
+    if (!confirmDelete) {
+      return;
+    }
     try {
       await axios.post('http://localhost:5000/api/footballs/update', formData);
       alert('Record updated successfully!');

@@ -16,6 +16,10 @@ const DeleteRecord = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const confirmDelete = window.confirm('Are you sure you want to delete this record?');
+    if (!confirmDelete) {
+      return;
+    }
     try {
       const response = await axios.post('http://localhost:5000/api/footballs/delete', formData);
       setMessage(response.data.message);

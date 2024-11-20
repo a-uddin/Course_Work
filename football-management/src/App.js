@@ -1,5 +1,5 @@
 // src/App.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import AllRecord from './components/AllRecord';
 import AddRecord from './components/AddRecord';
@@ -11,6 +11,29 @@ import AverageGoals from './components/AverageGoals';
 import TeamSummary from './components/TeamSummary'; // Import the new Team Summary component
 
 const App = () => {
+   {/* For Scroll to Top Button */}
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollToTop(true);
+      } else {
+        setShowScrollToTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+   {/* For Scroll to Top Button.. END HERE */}
+   
   return (
     <Router>
       {/* Navbar Code Starts Here */}
@@ -51,12 +74,13 @@ const App = () => {
               <Link className="nav-link" to="/average-goals">Average Goals</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/team-summary">Team Summary</Link> {/* New link for Team Summary */}
+              <Link className="nav-link" to="/team-summary">Team Summary</Link> 
             </li>
           </ul>
         </div>
       </nav>
       {/* Navbar Code Ends Here */}
+       
 
       <div className="container mt-4">
         <Routes>
@@ -67,9 +91,31 @@ const App = () => {
           <Route path="/delete-record" element={<DeleteRecord />} />
           <Route path="/top-winning-teams" element={<TopWinningTeams />} />
           <Route path="/average-goals" element={<AverageGoals />} />
-          <Route path="/team-summary" element={<TeamSummary />} /> {/* New route for Team Summary */}
+          <Route path="/team-summary" element={<TeamSummary />} /> 
         </Routes>
       </div>
+  {/* Scroll to Top Button */}
+  {showScrollToTop && (
+        <button
+          className="scroll-to-top"
+          onClick={scrollToTop}
+          style={{
+            position: 'fixed',
+            bottom: '50px',
+            right: '30px',
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '10%',
+            padding: '10px 15px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            zIndex: 1000
+          }}
+        >
+          &#8679;
+        </button>
+      )}
     </Router>
   );
 };

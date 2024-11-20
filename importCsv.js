@@ -1,23 +1,29 @@
 // importCsv.js
 const mongoose = require('mongoose');
 const csv = require('csvtojson');
-const Football = require('./footballSchema'); // Ensure this matches your file name
+const Football = require('./footballSchema'); 
 
 // Connect to MongoDB Atlas
-mongoose.connect('mongodb+srv://lenin3636:coursework1@cluster0.k7xh5.mongodb.net/FootballDB', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch(err => {
-  console.error('Connection error:', err);
-});
+const connectDB = async () => {
+  try {
+    await mongoose.connect('mongodb+srv://lenin3636:coursework1@cluster0.k7xh5.mongodb.net/FootballDB', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected successfully');
+  } catch (err) {
+    console.error('Database connection error:', err.message);
+    process.exit(1); // Exit process with failure
+  }
+};
 
 // Function to import CSV data
 const importData = async () => {
   try {
     const footballData = await csv({
       colParser: {
+        // colParser tells the CSV parser how to interpret the data for specific columns.
+        // By default they are String
         "Games Played": "number",
         "Win": "number",
         "Draw": "number",
@@ -31,7 +37,7 @@ const importData = async () => {
       checkType: true
     }).fromFile('./football_data.csv');
 
-    // Map the CSV fields to your schema
+    // Map the CSV fields to the schema
     const formattedData = footballData.map(item => ({
       Team: item["Team"],
       GamesPlayed: item["Games Played"],
