@@ -1,12 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import './AverageGoals.css';
 
-
 const AverageGoals = () => {
   const [year, setYear] = useState('');
+  const [years, setYears] = useState([]);
   const [teams, setTeams] = useState([]);
   const [flags, setFlags] = useState({});
   const [error, setError] = useState('');
+
+  // Fetch all unique years from the database
+  const fetchYears = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/footballs/years');
+      const data = await response.json();
+      setYears(data); // Set the years for the dropdown
+    } catch (error) {
+      console.error('Error fetching years:', error.message);
+      setError('Error fetching years. Please try again later.');
+    }
+  };
+  
+  useEffect(() => {
+    fetchYears(); // Fetch years when the component loads
+  }, []);
+  
 
   // Fetch country flags dynamically
   useEffect(() => {
@@ -31,7 +48,7 @@ const AverageGoals = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!year) {
-      setError('Please enter a year.');
+      setError('Please select a year.');
       return;
     }
     try {
@@ -52,20 +69,25 @@ const AverageGoals = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center mb-4">Teams with Average Goals for {year}</h2>
+      <h2 className="text-center mb-4">Teams with Average Goals</h2>
       <div className="row justify-content-center">
         <div className="col-lg-12 col-md-12">
           <form onSubmit={handleSubmit} className="mx-auto" style={{ maxWidth: '400px' }}>
             <div className="form-group mb-3">
-              <label>Enter Year</label>
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Year"
+              <label></label>
+              <select
+                className="form-control mt-3 text-white bg-secondary bg-gradiant"
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
                 required
-              />
+              >
+                <option value="">Choose a year</option>
+                {years.map((yr, index) => (
+                  <option key={index} value={yr}>
+                    {yr}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="d-grid">
               <button type="submit" className="btn btn-primary">

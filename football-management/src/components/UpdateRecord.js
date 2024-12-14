@@ -1,4 +1,3 @@
-// src/components/UpdateRecord.js
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -12,7 +11,7 @@ const UpdateRecord = () => {
     Loss: '',
     GoalsFor: '',
     GoalsAgainst: '',
-    Points: ''
+    Points: '',
   });
 
   const handleChange = (e) => {
@@ -25,13 +24,12 @@ const UpdateRecord = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const confirmDelete = window.confirm('Are you sure you want to Update this record?');
-    if (!confirmDelete) {
-      return;
-    }
+    const confirmUpdate = window.confirm('Are you sure you want to update this record?');
+    if (!confirmUpdate) return;
+
     try {
-      await axios.post('http://localhost:5000/api/footballs/update', formData);
-      alert('Record updated successfully!');
+      const response = await axios.post('http://localhost:5000/api/footballs/update', formData);
+      window.alert(response.data.message); // Show success message in an alert
       setFormData({
         Team: '',
         Year: '',
@@ -41,11 +39,12 @@ const UpdateRecord = () => {
         Loss: '',
         GoalsFor: '',
         GoalsAgainst: '',
-        Points: ''
+        Points: '',
       });
     } catch (err) {
-      console.error('Error updating record:', err);
-      alert('Error updating record. Please check the console for more details.');
+      const errorMessage = err.response?.data?.message || 'Error updating record. Please check the console for more details.';
+      window.alert(errorMessage); // Show error message in an alert
+      console.error('Error updating record:', errorMessage);
     }
   };
 

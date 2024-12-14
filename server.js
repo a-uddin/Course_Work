@@ -55,19 +55,40 @@ app.post('/api/footballs', async (req, res) => {
 // Update a record for a given team
 app.post('/api/footballs/update', async (req, res) => {
   const { Team, Year, ...updateData } = req.body;
+
   try {
-    const updatedRecord = await Football.findOneAndUpdate(
-      { Team, Year },
-      updateData,
-      { new: true }
-    );
+    console.log(`Update request received for Team: ${Team}, Year: ${Year}`);
+
+    // Validate inputs
+    if (!Team || !Year) {
+      return res.status(400).json({ message: 'Team and Year are required.' });
+    }
+
+    const query = {
+      Team: new RegExp(`^${Team}$`, 'i'), // Case-insensitive match
+      Year: parseInt(Year, 10),
+    };
+
+    console.log('Query being executed:', query);
+
+    // Check if the record exists
+    const record = await Football.findOne(query);
+
+    if (!record) {
+      console.log(`No record found for Team: ${Team}, Year: ${Year}`);
+      return res.status(404).json({ message: `No record found for Team: ${Team}.` });
+    }
+
+    // Proceed with the update
+    const updatedRecord = await Football.findOneAndUpdate(query, updateData, { new: true });
     console.log('Record updated:', updatedRecord);
     res.json({ message: 'Record updated successfully', updatedRecord });
   } catch (err) {
     console.error('Error updating record:', err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Internal server error.' });
   }
 });
+
 
 // Get total games played, draw, and won for a given year
 app.get('/api/footballs/summary/:year', async (req, res) => {
@@ -115,25 +136,52 @@ app.get('/api/footballs/team-summary/:team', async (req, res) => {
   }
 });
 
-
 // Delete a record for a given team
 app.post('/api/footballs/delete', async (req, res) => {
   const { Team, Year } = req.body;
+
   try {
-    await Football.findOneAndDelete({ Team: new RegExp(`^${Team}$`, 'i'), Year: parseInt(Year) });
-    console.log(`Record deleted for team: ${Team}, Year: ${Year}`);
-    res.json({ message: 'Record deleted successfully' });
+    console.log(`Delete request received for Team: ${Team}, Year: ${Year}`);
+
+    if (!Team || !Year) {
+      return res.status(400).json({ message: 'Team and Year are required.' });
+    }
+
+    const query = {
+      Team: new RegExp(`^${Team}$`, 'i'), // Case-insensitive regex
+      Year: parseInt(Year, 10),
+    };
+
+    console.log('Query being executed:', query);
+
+    // Check if the record exists
+    const record = await Football.findOne(query);
+
+    if (!record) {
+      console.log(`No record found for Team: ${Team}, Year: ${Year}`);
+      return res.status(404).json({ message: `No record found for Team: ${Team}.` });
+    }
+
+    // Proceed to delete the record
+    await Football.findOneAndDelete(query);
+    console.log(`Record deleted for Team: ${Team}, Year: ${Year}`);
+    res.json({ message: 'Record deleted successfully.' });
   } catch (err) {
     console.error('Error deleting record:', err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Internal server error.' });
   }
 });
+
+
+
+
 
 // Display first 10 records with "Won" greater than a given value
 app.get('/api/footballs/wins/:value', async (req, res) => {
   const value = parseInt(req.params.value);
   try {
     const results = await Football.find({ Win: { $gt: value } })
+    .sort({ Win: -1 })
       .limit(10)
       .exec();
     console.log(`Records with wins greater than ${value}:`, results);
@@ -227,5 +275,17 @@ app.get('/api/footballs/average-goals/:year', async (req, res) => {
   } catch (err) {
     console.error('Error fetching records:', err.message);
     res.status(500).json({ error: err.message });
+  }
+});
+
+
+// GET Route to Fetch Unique Years
+app.get('/api/footballs/years', async (req, res) => {
+  try {
+    const years = await Football.distinct('Year'); // Get unique years
+    res.json(years.sort((a, b) => b - a)); // Return years sorted in descending order
+  } catch (err) {
+    console.error('Error fetching years:', err.message);
+    res.status(500).json({ error: 'Error fetching years. Please try again later.' });
   }
 });

@@ -43,7 +43,9 @@ const TopWinningTeams = () => {
         setTeams([]);
       } else {
         setError('');
-        const sortedData = data.sort((a, b) => a.Team.localeCompare(b.Team)); // Sort teams alphabetically by team name
+        
+        // const sortedData = data.sort((a, b) => a.Team.localeCompare(b.Team)); // Sort teams alphabetically by team name
+       const sortedData = data.sort((a, b) => b.Win - a.Win); // Sort by win at descending order
         setTeams(sortedData);
       }
     } catch (error) {

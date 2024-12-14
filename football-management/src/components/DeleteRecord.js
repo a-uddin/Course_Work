@@ -1,11 +1,10 @@
-// src/components/DeleteRecord.js
 import React, { useState } from 'react';
 import axios from 'axios';
 
 const DeleteRecord = () => {
   const [formData, setFormData] = useState({
     Team: '',
-    Year: ''
+    Year: '',
   });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -17,18 +16,17 @@ const DeleteRecord = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const confirmDelete = window.confirm('Are you sure you want to delete this record?');
-    if (!confirmDelete) {
-      return;
-    }
+    if (!confirmDelete) return;
+
     try {
       const response = await axios.post('http://localhost:5000/api/footballs/delete', formData);
-      setMessage(response.data.message);
-      setError('');
+      setMessage(response.data.message); // Display success or "not found" message
+      setError(''); // Clear error
       setFormData({ Team: '', Year: '' }); // Reset form
     } catch (err) {
-      console.error('Error deleting record:', err);
-      setError('Error deleting record. Please check the console for more details.');
-      setMessage('');
+      console.error('Error deleting record:', err.response?.data || err.message);
+      setError(err.response?.data?.message || 'Error deleting record. Please check the console for more details.');
+      setMessage(''); // Clear success message
     }
   };
 
@@ -67,8 +65,8 @@ const DeleteRecord = () => {
             </div>
           </form>
 
-          {error && <p className="text-danger mt-3 text-center">{error}</p>}
-          {message && <p className="text-success mt-3 text-center">{message}</p>}
+          {error && <p className="text-danger mt-3 text-center font-weight-bold">{error}</p>}
+          {message && <p className="text-success mt-3 text-center font-weight-bold">{message}</p>}
         </div>
       </div>
     </div>

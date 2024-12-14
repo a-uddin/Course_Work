@@ -1,11 +1,26 @@
-// src/components/Summary.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Summary = () => {
   const [year, setYear] = useState('');
+  const [years, setYears] = useState([]); // State for available years
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState('');
+
+  // Fetch years when the component mounts
+  useEffect(() => {
+    const fetchYears = async () => {
+      try {
+        const { data } = await axios.get('http://localhost:5000/api/footballs/years');
+        setYears(data); // Populate years state
+      } catch (err) {
+        console.error('Error fetching years:', err);
+        setError('Error fetching years. Please try again later.');
+      }
+    };
+
+    fetchYears();
+  }, []);
 
   const fetchSummary = async (e) => {
     if (e) e.preventDefault();
@@ -32,15 +47,20 @@ const Summary = () => {
         <div className="col-lg-6 col-md-8 col-sm-10">
           <form onSubmit={fetchSummary}>
             <div className="form-group mb-3">
-              <label>Enter Year</label>
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Year"
+            <label></label>
+              <select
+                className="form-control text-white bg-secondary bg-gradiant"
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
                 required
-              />
+              >
+                <option value="">Choose a year</option>
+                {years.map((yr, index) => (
+                  <option key={index} value={yr}>
+                    {yr}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="d-grid">
               <button type="submit" className="btn btn-primary">

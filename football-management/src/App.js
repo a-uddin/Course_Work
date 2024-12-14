@@ -8,7 +8,7 @@ import Summary from './components/Summary';
 import DeleteRecord from './components/DeleteRecord';
 import TopWinningTeams from './components/TopWinningTeams';
 import AverageGoals from './components/AverageGoals';
-import TeamSummary from './components/TeamSummary'; // Import the new Team Summary component
+import TeamSummary from './components/TeamSummary'; 
 
 const App = () => {
    {/* For Scroll to Top Button */}
@@ -37,7 +37,7 @@ const App = () => {
   return (
     <Router>
       {/* Navbar Code Starts Here */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <Link className="navbar-brand" to="/">Football Records</Link>
         <button
           className="navbar-toggler"
@@ -62,11 +62,12 @@ const App = () => {
               <Link className="nav-link" to="/update-record">Update Data</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/year-summary">Year Summary</Link>
-            </li>
-            <li className="nav-item">
               <Link className="nav-link" to="/delete-record">Delete Record</Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/year-summary">Year Summary</Link>
+            </li>
+          
             <li className="nav-item">
               <Link className="nav-link" to="/top-winning-teams">Top Winning Teams</Link>
             </li>
