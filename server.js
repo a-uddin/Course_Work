@@ -36,7 +36,7 @@ app.get('/api/footballs', async (req, res) => {
   }
 });
 
-// Add a record to the Football collection
+// TASK 1.5: Add a record to the Football collection
 app.post('/api/footballs', async (req, res) => {
   try {
     const newRecord = new Football(req.body);
@@ -52,7 +52,7 @@ app.post('/api/footballs', async (req, res) => {
 
 
 
-// Update a record for a given team
+// TASK 1.6: Update a record for a given team
 app.post('/api/footballs/update', async (req, res) => {
   const { Team, Year, ...updateData } = req.body;
 
@@ -90,7 +90,7 @@ app.post('/api/footballs/update', async (req, res) => {
 });
 
 
-// Get total games played, draw, and won for a given year
+// TASK 1.7: Get total games played, draw, and won for a given year
 app.get('/api/footballs/summary/:year', async (req, res) => {
   const year = req.params.year;
   try {
@@ -113,30 +113,7 @@ app.get('/api/footballs/summary/:year', async (req, res) => {
   }
 });
 
-
-// Get total games played, draw, and won for a given team 
-app.get('/api/footballs/team-summary/:team', async (req, res) => {
-  const teamName = req.params.team;
-  try {
-    const summary = await Football.aggregate([
-      { $match: { Team: { $regex: new RegExp(`^${teamName}$`, 'i') } } }, // Case-insensitive match
-      {
-        $group: {
-          _id: '$Team',
-          totalGamesPlayed: { $sum: '$GamesPlayed' },
-          totalWins: { $sum: '$Win' },
-          totalDraws: { $sum: '$Draw' },
-        },
-      },
-    ]);
-    res.json(summary);
-  } catch (err) {
-    console.error('Error fetching summary for team:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Delete a record for a given team
+// TASK 1.8: Delete a record for a given team
 app.post('/api/footballs/delete', async (req, res) => {
   const { Team, Year } = req.body;
 
@@ -173,10 +150,7 @@ app.post('/api/footballs/delete', async (req, res) => {
 });
 
 
-
-
-
-// Display first 10 records with "Won" greater than a given value
+// TASK 1.9 Display first 10 records with "Won" greater than a given value
 app.get('/api/footballs/wins/:value', async (req, res) => {
   const value = parseInt(req.params.value);
   try {
@@ -192,56 +166,7 @@ app.get('/api/footballs/wins/:value', async (req, res) => {
   }
 });
 
-// Display all teams with average "Goals For" greater than a given value
-app.get('/api/footballs/goals/:year', async (req, res) => {
-  const year = parseInt(req.params.year);
-  try {
-    const results = await Football.aggregate([
-      { $match: { Year: year } },
-      {
-        $group: {
-          _id: '$Team',
-          avgGoals: { $avg: '$GoalsFor' },
-        },
-      },
-      { $match: { avgGoals: { $gt: 0 } } },
-    ]);
-    console.log(`Teams with average "Goals For" for the year ${year}:`, results);
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching teams with average goals:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// Get total games played, draw, and won for a given team
-app.get('/api/footballs/summary/team/:teamName', async (req, res) => {
-  const teamName = req.params.teamName;
-  try {
-    // Find the document for the given team name (case-insensitive)
-    const summary = await Football.findOne({ Team: new RegExp(`^${teamName}$`, 'i') }, {
-      Team: 1,
-      GamesPlayed: 1,
-      Win: 1,
-      Draw: 1,
-      _id: 0, // Exclude the default MongoDB _id field
-    });
-
-    if (summary) {
-      console.log(`Summary for team ${teamName}:`, summary);
-      res.json(summary);
-    } else {
-      res.status(404).json({ message: `No data found for team ${teamName}` });
-    }
-  } catch (err) {
-    console.error('Error fetching summary for team:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// GET Route to Fetch Records with Average Goals for a Given Year (by Team)
+// TASK 2.0: GET Route to Fetch Records with Average Goals for a Given Year (by Team)
 app.get('/api/footballs/average-goals/:year', async (req, res) => {
   const year = parseInt(req.params.year);
   try {
@@ -278,8 +203,32 @@ app.get('/api/footballs/average-goals/:year', async (req, res) => {
   }
 });
 
+// Get total games played, draw, and won for a given team 
+// This task is for TASK 2.3 for Frontend
+app.get('/api/footballs/team-summary/:team', async (req, res) => {
+  const teamName = req.params.team;
+  try {
+    const summary = await Football.aggregate([
+      { $match: { Team: { $regex: new RegExp(`^${teamName}$`, 'i') } } }, // Case-insensitive match
+      {
+        $group: {
+          _id: '$Team',
+          totalGamesPlayed: { $sum: '$GamesPlayed' },
+          totalWins: { $sum: '$Win' },
+          totalDraws: { $sum: '$Draw' },
+        },
+      },
+    ]);
+    res.json(summary);
+  } catch (err) {
+    console.error('Error fetching summary for team:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
 
-// GET Route to Fetch Unique Years
+
+// GET Route to Fetch Unique Years 
+
 app.get('/api/footballs/years', async (req, res) => {
   try {
     const years = await Football.distinct('Year'); // Get unique years

@@ -14,7 +14,7 @@ const footballSchema = new mongoose.Schema({
   Year: { type: Number, required: true },
 });
 
-// Create a Model with the correct collection name 'footballs'
+// Create a Model with collection 'footballs'
 const Football = mongoose.model('Football', footballSchema, 'footballs');
 
 module.exports = Football;
