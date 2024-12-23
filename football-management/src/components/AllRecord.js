@@ -116,7 +116,9 @@ const AllRecord = () => {
       return;
     }
 
-    const filteredByYear = records.filter((record) => record.Year === parseInt(year, 10));
+    const filteredByYear = records.filter(
+      (record) => record.Year === parseInt(year, 10)
+    );
     setFilteredRecords(filteredByYear);
   };
 
@@ -153,26 +155,26 @@ const AllRecord = () => {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="table-responsive">
-        <table className="table table-striped">
-          <thead className="thead-dark">
-            <tr>
-              <th></th>
-              <th>Team</th>
-              <th>Games Played</th>
-              <th>Win</th>
-              <th>Draw</th>
-              <th>Loss</th>
-              <th>Goals For</th>
-              <th>Goals Against</th>
-              <th>Points</th>
-              <th>Year</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredRecords.length > 0 ? (
-              filteredRecords.map((record, index) => (
+      {/* Conditional rendering */}
+      {filteredRecords.length > 0 ? (
+        <div className="table-responsive">
+          <table className="table table-striped">
+            <thead className="thead-dark">
+              <tr>
+                <th></th>
+                <th>Team</th>
+                <th>Games Played</th>
+                <th>Win</th>
+                <th>Draw</th>
+                <th>Loss</th>
+                <th>Goals For</th>
+                <th>Goals Against</th>
+                <th>Points</th>
+                <th>Year</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRecords.map((record, index) => (
                 <tr key={index}>
                   <td>
                     {flags[record.Team] ? (
@@ -195,32 +197,50 @@ const AllRecord = () => {
                   <td>{record.Points}</td>
                   <td>{record.Year}</td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="10" className="text-center">
-                  No records found
-                </td>
-              </tr>
-            )}
-            {/* Total Row */}
-            {filteredRecords.length > 0 && teamSearch.trim() !== "" && (
-              <tr className="table-info">
-                <td><strong>&mdash;</strong></td>
-                <td><strong>Total</strong></td>
-                <td><strong>{totalRow.GamesPlayed}</strong></td>
-                <td><strong>{totalRow.Win}</strong></td>
-                <td><strong>{totalRow.Draw}</strong></td>
-                <td><strong>{totalRow.Loss}</strong></td>
-                <td><strong>{totalRow.GoalsFor}</strong></td>
-                <td><strong>{totalRow.GoalsAgainst}</strong></td>
-                <td><strong>&mdash;</strong></td>
-                <td><strong>&mdash;</strong></td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+              {/* Total Row */}
+              {teamSearch.trim() !== "" && (
+                <tr className="table-info">
+                  <td>
+                    <strong>&mdash;</strong>
+                  </td>
+                  <td>
+                    <strong>Total</strong>
+                  </td>
+                  <td>
+                    <strong>{totalRow.GamesPlayed}</strong>
+                  </td>
+                  <td>
+                    <strong>{totalRow.Win}</strong>
+                  </td>
+                  <td>
+                    <strong>{totalRow.Draw}</strong>
+                  </td>
+                  <td>
+                    <strong>{totalRow.Loss}</strong>
+                  </td>
+                  <td>
+                    <strong>{totalRow.GoalsFor}</strong>
+                  </td>
+                  <td>
+                    <strong>{totalRow.GoalsAgainst}</strong>
+                  </td>
+                  <td>
+                    <strong>&mdash;</strong>
+                  </td>
+                  <td>
+                    <strong>&mdash;</strong>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="alert alert-warning text-center mt-4">
+          No records found for the entered Team.
+        </div>
+      )}
     </div>
   );
 };

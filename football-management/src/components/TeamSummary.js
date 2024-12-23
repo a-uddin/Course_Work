@@ -117,66 +117,71 @@ const TeamSummary = () => {
         </div>
       </div>
 
-      {/* Matching Teams Table */}
-      {matchingRecords.length > 0 && (
-        <div className="mt-4">
-          <h4 className="text-center mb-3">Matching Teams</h4>
-          <div className="table-responsive">
-            <table className="table table-striped">
-              <thead className="thead-dark">
-                <tr>
-                  <th>Flag</th>
-                  <th>Team</th>
-                  <th>Games Played</th>
-                  <th>Win</th>
-                  <th>Draw</th>
-                  <th>Loss</th>
-                  <th>Goals For</th>
-                  <th>Goals Against</th>
-                  <th>Year</th>
-                </tr>
-              </thead>
-              <tbody>
-                {matchingRecords.map((record, index) => (
-                  <tr key={index}>
-                    <td>
-                      {flags[record.Team] ? (
-                        <img
-                          src={flags[record.Team]}
-                          alt={record.Team}
-                          style={{ width: "40px", height: "25px" }}
-                        />
-                      ) : (
-                        "N/A"
-                      )}
-                    </td>
-                    <td>{record.Team}</td>
-                    <td>{record.GamesPlayed}</td>
-                    <td>{record.Win}</td>
-                    <td>{record.Draw}</td>
-                    <td>{record.Loss}</td>
-                    <td>{record.GoalsFor}</td>
-                    <td>{record.GoalsAgainst}</td>
-                    <td>{record.Year}</td>
-                  </tr>
-                ))}
-                {/* Totals Row */}
-                <tr className="table-info">
-                  <td><strong>&mdash;</strong></td>
-                  <td><strong>Total</strong></td>
-                  <td><strong>{totals.GamesPlayed}</strong></td>
-                  <td><strong>{totals.Win}</strong></td>
-                  <td><strong>{totals.Draw}</strong></td>
-                  <td><strong>{totals.Loss}</strong></td>
-                  <td><strong>{totals.GoalsFor}</strong></td>
-                  <td><strong>{totals.GoalsAgainst}</strong></td>
-                  <td><strong>&mdash;</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+ {/* Matching Teams Table */}
+{team.trim() && matchingRecords.length > 0 ? (
+  <div className="mt-4">
+    <h4 className="text-center mb-3">Matching Teams</h4>
+    <div className="table-responsive">
+      <table className="table table-striped">
+        <thead className="thead-dark">
+          <tr>
+            <th></th>
+            <th>Team</th>
+            <th>Games Played</th>
+            <th>Win</th>
+            <th>Draw</th>
+            <th>Loss</th>
+            <th>Goals For</th>
+            <th>Goals Against</th>
+            <th>Year</th>
+          </tr>
+        </thead>
+        <tbody>
+          {matchingRecords.map((record, index) => (
+            <tr key={index}>
+              <td>
+                {flags[record.Team] ? (
+                  <img
+                    src={flags[record.Team]}
+                    alt={record.Team}
+                    style={{ width: "40px", height: "25px" }}
+                  />
+                ) : (
+                  "N/A"
+                )}
+              </td>
+              <td>{record.Team}</td>
+              <td>{record.GamesPlayed}</td>
+              <td>{record.Win}</td>
+              <td>{record.Draw}</td>
+              <td>{record.Loss}</td>
+              <td>{record.GoalsFor}</td>
+              <td>{record.GoalsAgainst}</td>
+              <td>{record.Year}</td>
+            </tr>
+          ))}
+          {/* Totals Row */}
+          <tr className="table-info">
+            <td><strong>&mdash;</strong></td>
+            <td><strong>Total</strong></td>
+            <td><strong>{totals.GamesPlayed}</strong></td>
+            <td><strong>{totals.Win}</strong></td>
+            <td><strong>{totals.Draw}</strong></td>
+            <td><strong>{totals.Loss}</strong></td>
+            <td><strong>{totals.GoalsFor}</strong></td>
+            <td><strong>{totals.GoalsAgainst}</strong></td>
+            <td><strong>&mdash;</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+) : team.trim() && matchingRecords.length === 0 ? (
+  <div className="alert alert-warning text-center mt-4">
+    No records found for the entered team.
+  </div>
+) : null}
+
     </div>
   );
 };
