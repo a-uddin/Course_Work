@@ -23,3 +23,5 @@ Create Front end using React Application consisting of Components (either using 
 2.5. A component that to create userinterface to display first 10 drecords from the records for Task mentioned in 1.9.</br>
 2.6. user interface to result of Task 2.0 i.e. Query to display the all the Team (including all nine columns) where average “Goal For” for a given year.</br>
 2.7 A React Router Application that integrates all the above components. </br>
+
+<strong>Sample outputs</strong></br>
